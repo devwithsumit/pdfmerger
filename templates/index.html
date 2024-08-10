@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Merger</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="bg-blue-600 p-4">
+        <div class="container mx-auto flex justify-center items-center">
+            <a href="#" class="text-white text-center text-xl font-bold">PDF Merger</a>
+            <div class="space-x-4">
+
+            </div>
+        </div>
+    </nav>
+    <div id="main" class="bg-gray-100 h-screen flex items-center justify-center">
+        <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
+            <h1 class="text-2xl font-bold text-center mb-6">PDF Merger</h1>
+            <form id="pdf-merger-form" action="/merge" method="post" class="space-y-4" enctype='multipart/form-data'>
+                <div class="flex items-center justify-center w-full">
+                    <label for="file-upload" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-400 rounded-lg cursor-pointer hover:bg-gray-100">
+                        <svg class="w-12 h-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4a1 1 0 011-1h8a1 1 0 011 1v12m-4 4H7a1 1 0 01-1-1V4m16 4H5m16 0a2 2 0 00-2-2m0 0a2 2 0 00-2-2m2 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2m0 0a2 2 0 012-2h8a2 2 0 012 2m0 0a2 2 0 012 2v8a2 2 0 01-2 2H5m16-8a2 2 0 00-2-2"/>
+                        </svg>
+                        <span class="mt-2 text-base leading-normal">Select PDF files</span>
+                        <input id="file-upload" name="pdfs" type="file" class="hidden" multiple accept="application/pdf">
+                    </label>
+                </div>
+                <div id="file-list" class="space-y-2">
+                <!-- List of selected files will be shown here -->
+                </div>
+                <button type="submit" class="w-full py-2 px-4 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Merge PDFs</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        const fileInput = document.getElementById('file-upload');
+        const fileList = document.getElementById('file-list');
+
+        fileInput.addEventListener('change', () => {
+            fileList.innerHTML = '';
+            Array.from(fileInput.files).forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.classList.add('flex', 'items-center', 'justify-between', 'bg-gray-100', 'p-2', 'rounded-lg', 'shadow-sm');
+                fileItem.innerHTML = `
+                    <span class="text-gray-700">${file.name}</span>
+                    <button type="button" class="text-red-500 hover:text-red-700" onclick="removeFile('${file.name}')">Remove</button>
+                `;
+                fileList.appendChild(fileItem);
+            });
+        });
+
+        function removeFile(fileName) {
+            const filesArray = Array.from(fileInput.files).filter(file => file.name !== fileName);
+            fileInput.files = new DataTransfer().files;
+            filesArray.forEach(file => fileInput.files.item(0).items.add(file));
+            fileInput.dispatchEvent(new Event('change'));
+        }
+    </script>
+</body>
+</html>
